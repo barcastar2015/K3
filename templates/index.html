@@ -33,6 +33,9 @@
                     <li>
 						<a href ng-click="tab.setTab(3)">Lisa uus loom</a>
 					</li>
+                    <li>
+						<a href ng-click="tab.setTab(4)">Lisa uus nägemine</a>
+					</li>
 				</ul>
 			</div>
 		  <div class="col-md-8">
@@ -72,6 +75,19 @@
                         <input type="text" placeholder="Uue looma nimi" name="uusNimi" id="uusNimi">
                         <br>
                         <input type="text" placeholder="Uue looma liik" name="uusLiik" id="uusLiik">
+                        <br>
+                        <input type="submit" id="submit" value="Lisa">
+                    </div>
+                    <div ng-show="tab.isSet(4)">
+                        Lisa uus looma näegmine:
+                        <br>
+                        <select name="nimi">
+                            {% autoescape off %}{{ options }}{% endautoescape %}
+                        </select>
+                        <br>
+                        <input type="text" placeholder="Koht" name="koht" id="koht">
+                        <br>
+                        <input type="datetime-local" placeholder="Aeg" name="aeg" id="aeg">
                         <br>
                         <input type="submit" id="submit" value="Lisa">
                     </div>
