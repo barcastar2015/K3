@@ -1,0 +1,29 @@
+h1 {
+    text-align: center;
+    color: cadetblue;
+    margin: 50px;
+}
+
+table {
+    margin: 50px;
+}
+
+input {
+    width: 200px;
+}
+
+input.submitbtns {
+    background-color: darkgrey;
+}
+
+.register {
+    margin: 50px;
+}
+
+#addNew {
+    margin-top: 20px;
+}
+
+.formDiv {
+    border-style: dotted solid;
+}
