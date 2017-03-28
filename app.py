@@ -34,7 +34,7 @@ def index():
     cur.execute('SELECT Nimi FROM loomad')
     options = "<option></option>"
     for row in cur.fetchall():
-        options += "<option>" + row[0] + "</option>"
+        options += "<option value='" + row[0] + "'>" + row[0] + "</option>"
     if request.method == 'POST':
         if len(request.form['loomaNimi']) > 0:
             loomaNimi = request.form['loomaNimi']
@@ -53,40 +53,27 @@ def index():
             loomaLiik = request.form['uusLiik']
             cur.execute("""INSERT INTO loomad (Nimi, Liik) VALUES (%s, %s)""", (loomaNimi, loomaLiik))
             conn.commit()
-            cur.execute('SELECT * FROM loomad WHERE Nimi = %s', loomaNimi)
-            loomaTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Liik</th></tr></thead><tbody>"
-            for row in cur.fetchall():
-                loomaTabel += "<tr><td>" + row[0] + "</td><td>" + row[1] + "</td></tr>"
-                loomaTabel += "</tbody></table>"
-            cur.execute('SELECT * FROM nägemine WHERE Nimi = %s', loomaNimi)
+
             tabNr=1
-            return render_template("index.html", loomaNimi=loomaNimi, loomaTabel=loomaTabel, options=options, tabNr=tabNr)
-        '''elif len(request.form['koht']) > 0:
-            nimi = request.form['list']
+            return render_template("index.html", loomaNimi=loomaNimi, options=options, tabNr=tabNr)
+        if len(request.form['koht']) > 0:
+            nimi = request.form['nimi']
             koht = request.form['koht']
             aeg = request.form['aeg']
-            cur.execute("""INSERT INTO nägemine (Nimi, Asukoht, Aeg) VALUES (%s, %s, %s)""", (nimi, koht, aeg))
+            cur.execute("INSERT INTO nägemine (Nimi, Asukoht, Aeg) VALUES (%s, %s, %s)", (nimi, koht, aeg))
             conn.commit()
-            cur.execute('SELECT * FROM nägemine WHERE Nimi = %s', nimi)
-            data3 = "<table class='table'><thead><tr><th>Nimi</th><th>Koht</th><th>Aeg</th></tr></thead><tbody>"
-            for row in cur.fetchall():
-                data3 += "<tr><td>" + row[0] + "</td><td>" + row[1] + "</td><td>" + row[2].now().strftime(
-                    "%Y-%m-%d %H:%M:%S") + "</td></tr>"
-            data3 += "</tbody></table>"
-
-            cur.execute('SELECT * FROM nägemine WHERE Nimi = %s', nimi)
-            return render_template("index.html", result=nimi, data2=data3, options=options)'''
+            tabNr = "1"
+            return render_template("index.html", result=nimi, options=options, tabNr=tabNr)
 
         return render_template("index.html", options=options)
-    script = "1"
-    return render_template("index.html", options=options, tabNr=script)
-app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+    tabNr = "1"
+    return render_template("index.html", options=options, tabNr=tabNr)
 
 def getSeeingsOfOneAnimal(loomaNimi):
     cur.execute('SELECT * FROM nägemine WHERE Nimi = %s', loomaNimi)
     nagemisTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Koht</th><th>Aeg</th></tr></thead><tbody>"
     for row in cur.fetchall():
-        nagemisTabel += "<tr><td>" + row[0] + "</td><td contenteditable>" + row[1] + "</td><td contenteditable>" + row[2].now().strftime(
+        nagemisTabel += "<tr><td>" + row[0] + "</td><td contenteditable>" + row[1] + "</td><td contenteditable>" + row[2].strftime(
             "%Y-%m-%d %H:%M:%S") + "</td></tr>"
     nagemisTabel += "</tbody></table>"
     return nagemisTabel
