@@ -19,7 +19,7 @@
     }
 </style>
 </head>
-<body  ng-controller="listCtrl as list">
+<body>
 <div class="container" ng-controller="tabCtrl as tab">
 		<div class="row">
 			<div class="col-md-2">
@@ -29,6 +29,9 @@
 					</li>
 					<li>
 						<a href ng-click="tab.setTab(2)">Otsi liigi järgi</a>
+					</li>
+                    <li>
+						<a href ng-click="tab.setTab(5)">Vaata nägemisi asukoha järgi</a>
 					</li>
                     <li>
 						<a href ng-click="tab.setTab(3)">Lisa uus loom</a>
@@ -69,6 +72,16 @@
                                 {% autoescape off %}{{ nagemisTabel2 }}{% endautoescape %}
                             </div>
                     </div>
+                    <div ng-show="tab.isSet(5)">
+                        Otsi asukoha järgi:
+                        <input type="text" placeholder="Asukoht" name="asukoht">
+                        <input type="submit" id="submit" value="Otsi">
+                        <br>
+                        <h1>Nägemine</h1>
+                        <div id="div1">
+                            {% autoescape off %}{{ nagemisTabel3 }}{% endautoescape %}
+                        </div>
+                    </div>
                     <div ng-show="tab.isSet(3)">
                         Lisa uus loom:
                         <br>
@@ -79,7 +92,7 @@
                         <input type="submit" id="submit" value="Lisa">
                     </div>
                     <div ng-show="tab.isSet(4)">
-                        Lisa uus looma näegmine:
+                        Lisa uus looma nägemine:
                         <br>
                         <select name="nimi">
                             {% autoescape off %}{{ options }}{% endautoescape %}
@@ -97,6 +110,7 @@
 	</div>
 </div>
 <script>
+
 	var app = angular.module('myApp', []);
 	app.controller('tabCtrl', function() {
 	    foo = function(event) {
@@ -113,67 +127,8 @@
 		};
 	});
 
-	app.controller('listCtrl', function() {
-		this.list = [];
-		this.newItem = {};
-		this.addItem = function() {
-			this.list.push(this.newItem);
-			this.newItem = {};
-		};
-	});
-</script>
 
-        <!--div class="container" style="margin-top:50px;">
-            <div>
-                <div class="col-md-6 col-md-offset-3 text-center formDiv">
-                    <form action="" method="POST" id="form">
-                        Otsi nime järgi:
-                        <input type="text" placeholder="Looma nimi" name="nimi" id="nimi"><br><br>
-                        Lisa uus loom:
-                        <input type="text" placeholder="Uue looma nimi" name="uusNimi" id="uusNimi">
-                        <input type="text" placeholder="Uue looma liik" name="uusLiik" id="uusLiik"><br><br>
-                        Lisa looma nägemine:
-                        <br>
-                        Nähtud looma nimi:
-                        <select name="list" form="form">
-                            {% autoescape off %}{{ options }}{% endautoescape %}
-                        </select>
-                        <input type="text" placeholder="Nägemise koht" name="koht" id="koht">
-                        <input type="datetime-local" placeholder="Nägemise aeg" name="aeg" id="aeg">
-                        <input type="Submit" value="Kinnita">
-                    </form>
-                </div>
-                <br>
-                <div class="col-md-6 col-md-offset-3 text-center formDiv">
-                    Otsi nime järgi:<br>
-                    <form action="" method="POST" id="form">
-                        <input type="text" placeholder="Looma nimi" name="nimi" id="nimi"><br>
-                        <br>
-                        <input type="Submit" value="Otsi">
-                    </form>
-                </div>
-                <br>
-                <div class="col-md-6 col-md-offset-3 text-center formDiv">
-                    Lisa uus loom:<br>
-                    <form action="" method="POST" id="form">
-                        <input type="text" placeholder="Uue looma nimi" name="uusNimi" id="uusNimi">
-                        <input type="text" placeholder="Uue looma liik" name="uusLiik" id="uusLiik"><br>
-                        <input type="Submit" value="Lisa">
-                    </form>
-                </div>
-                <div class="col-md-6 col-md-offset-3 text-center">
-                        <h1>Loomad</h1>
-                        <div>
-                            {% autoescape off %}{{ data }}{% endautoescape %}
-                        </div>
-                </div>
-                <div class="col-md-6 col-md-offset-3 text-center">
-                        <h1>Nägemine</h1>
-                        <div>
-                            {% autoescape off %}{{ data2 }}{% endautoescape %}
-                        </div>
-                </div>
-            </div>
-        </div-->
-    </body>
+
+</script>
+</body>
 </html>
