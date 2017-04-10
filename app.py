@@ -24,15 +24,16 @@ def delete():
     conn.commit()
     cur.execute("DELETE FROM nägemine WHERE Nimi=%s", loomaNimi)
     conn.commit()
-    tabNr = "1"
-    #return redirect("http://127.0.0.1:5003/", 200)
-    return render_template("index.html", tabNr=tabNr)
+    return redirect(url_for('index'))
+    #loomaTabel = getSpeiceByName("Ott")
+    #nagemisTabel = getSeeingsOfOneAnimal("Ott")
+    #tabNr = "1"
+    #return render_template("index.html", loomaNimi=loomaNimi, loomaTabel1=loomaTabel, nagemisTabel1=nagemisTabel, tabNr=tabNr)
 
-
-@app.route('/', methods = ['POST', 'GET'])
+@app.route('/', methods=['POST', 'GET'])
 def index():
     cur.execute('SELECT Nimi FROM loomad')
-    options = "<option></option>"
+    options=""
     for row in cur.fetchall():
         options += "<option value='" + row[0] + "'>" + row[0] + "</option>"
     if request.method == 'POST':
@@ -64,6 +65,11 @@ def index():
             conn.commit()
             tabNr = "1"
             return render_template("index.html", result=nimi, options=options, tabNr=tabNr)
+        if len(request.form['asukoht']) > 0:
+            asukoht = request.form['asukoht']
+            nagemisTabel = getSeeingsByLocation(asukoht)
+            tabNr = "5"
+            return render_template("index.html", asukoht=asukoht, nagemisTabel3=nagemisTabel, options=options, tabNr=tabNr)
 
         return render_template("index.html", options=options)
     tabNr = "1"
@@ -73,9 +79,9 @@ def getSeeingsOfOneAnimal(loomaNimi):
     cur.execute('SELECT * FROM nägemine WHERE Nimi = %s', loomaNimi)
     nagemisTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Koht</th><th>Aeg</th></tr></thead><tbody>"
     for row in cur.fetchall():
-        nagemisTabel += "<tr><td>" + row[0] + "</td><td contenteditable>" + row[1] + "</td><td contenteditable>" + row[2].strftime(
-            "%Y-%m-%d %H:%M:%S") + "</td></tr>"
-    nagemisTabel += "</tbody></table>"
+        nagemisTabel += "<tr><td>" + row[0] + '</td><td id="location" contenteditable="true">' + row[1] \
+                        + "</td><td contenteditable id='time'>" + row[2].strftime("%Y-%m-%d %H:%M:%S") + "</td></tr>"
+        nagemisTabel += "</tbody></table>"
     return nagemisTabel
 
 
@@ -86,9 +92,9 @@ def getSpeiceByName(loomaNimi):
     str3 = str + str1 + str2
 
     cur.execute('SELECT * FROM loomad WHERE Nimi = %s', loomaNimi)
-    loomaTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Liik</th><th>Kustuta</th></tr></thead><tbody>"
+    loomaTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Liik</th><th></th></tr></thead><tbody>"
     for row in cur.fetchall():
-        loomaTabel += "<tr><td>" + row[0] + "</td><td contenteditable>" + row[1] + "</td><td><a href='/delete?loomaNimi="+loomaNimi+"'>Kustuta</a></td></tr>"
+        loomaTabel += "<tr><td>" + row[0] + "</td><td contenteditable id='speice'>" + row[1] + "</td><td><a href='/delete?loomaNimi="+loomaNimi+"'>Kustuta</a></td></tr>"
     loomaTabel += "</tbody></table>"
     return loomaTabel
 
@@ -99,8 +105,8 @@ def getDataFromSeeingTable(liigiNimi):
                 liigiNimi)
     nagemisTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Koht</th><th>Aeg</th></tr></thead><tbody>"
     for row in cur.fetchall():
-        nagemisTabel += "<tr><td>" + row[0] + "</td><td>" + row[1] + "</td><td>" + row[2].now().strftime(
-            "%Y-%m-%d %H:%M:%S") + "</td></tr>"
+        nagemisTabel += "<tr><td>" + row[0] + "</td><td>" + row[1] + "</td><td>" + row[
+                            2].strftime("%Y-%m-%d %H:%M:%S") + "</td></tr>"
     nagemisTabel += "</tbody></table>"
     return nagemisTabel
 
@@ -111,6 +117,16 @@ def getDataFromAnimalsTable(liigiNimi):
         loomaTabel += "<tr><td>" + row[0] + "</td><td>" + row[1] + "</td></tr>"
     loomaTabel += "</tbody></table>"
     return loomaTabel
+
+def getSeeingsByLocation(asukoht):
+    cur.execute('SELECT * FROM nägemine WHERE Asukoht = %s', asukoht)
+    nagemisTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Koht</th><th>Aeg</th></tr></thead><tbody>"
+    for row in cur.fetchall():
+        nagemisTabel += "<tr><td>" + row[0] + "</td><td>" + row[1] + "</td><td>" + row[
+            2].strftime(
+            "%Y-%m-%d %H:%M:%S") + "</td></tr>"
+    nagemisTabel += "</tbody></table>"
+    return nagemisTabel
 
 if __name__ == '__main__':
     app.run(port=5003)
