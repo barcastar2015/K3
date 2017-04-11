@@ -50,7 +50,7 @@
                         <input type="submit" id="submit" value="Otsi">
                         <br>
                         <h1>Loomad</h1>
-                        <div>
+                        <div id="divLoom">
                             {% autoescape off %}{{ loomaTabel1 }}{% endautoescape %}
                         </div>
                         <h1>Nägemine</h1>
@@ -110,6 +110,47 @@
 	</div>
 </div>
 <script>
+    $('#divLoom').on('blur', '[contenteditable]', function() {
+        var $this = $(this);
+        if ($this.data('before') !== $this.html()) {
+            $this.data('before', $this.html());
+            $this.trigger('change');
+            var loom = $('#name').text();
+           var text = $('#speice').text();
+           window.location.replace("update?loomaNimi="+ loom +"&liigiNimi=" + text);
+        }
+        return $this;
+    });
+
+    var clickedId;
+    var lastChar;
+    $('#div1').on('focus', '[contenteditable]', function() {
+        var $this = $(this);
+        $this.data('before', $this.html());
+        clickedId = $this.attr('id');
+        lastChar = clickedId.substr(clickedId.length-1);
+        clickedId = clickedId.substr(0, clickedId.length-1);
+        return $this;
+        }).on('blur', '[contenteditable]', function() {
+        var $this = $(this);
+        if ($this.data('before') !== $this.html()) {
+            $this.data('before', $this.html());
+            $this.trigger('change');
+            var asukohtId = '#location' + lastChar;
+            var aegId = '#time' + lastChar;
+            var loomId = '#animalName' + lastChar;
+            var asukoht = $(asukohtId).text();
+            var loom = $(loomId).text();
+            var aeg = $(aegId).text();
+            if (clickedId == "location") {
+                window.location.replace("updateLocation?loomaNimi=" + loom + "&asukoht=" + asukoht + "&aeg=" + aeg);
+            }
+            if (clickedId == "time") {
+                window.location.replace("updateTime?loomaNimi=" + loom + "&asukoht=" + asukoht + "&aeg=" + aeg)
+            }
+        }
+        return $this;
+    });
 
 	var app = angular.module('myApp', []);
 	app.controller('tabCtrl', function() {
