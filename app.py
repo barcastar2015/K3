@@ -26,6 +26,15 @@ def delete():
     conn.commit()
     return redirect(url_for('index'))
 
+@app.route('/search', methods = ['POST', 'GET'])
+def search():
+    loomaNimi = request.args.get('loomaNimi')
+    loomaTabel = getSpeiceByName(loomaNimi)
+    nagemisTabel = getSeeingsOfOneAnimal(loomaNimi)
+    tabNr = "1"
+    return render_template("index.html", loomaNimi=loomaNimi, loomaTabel1=loomaTabel, nagemisTabel1=nagemisTabel,
+                           options="", tabNr=tabNr)
+
 @app.route('/update', methods = ['POST','GET'])
 def update():
     loomaNimi = request.args.get('loomaNimi')
@@ -147,7 +156,7 @@ def getSeeingsByLocation(asukoht):
     cur.execute('SELECT * FROM nägemine WHERE Asukoht = %s', asukoht)
     nagemisTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Koht</th><th>Aeg</th></tr></thead><tbody>"
     for row in cur.fetchall():
-        nagemisTabel += "<tr><td>" + row[0] + "</td><td>" + row[1] + "</td><td>" + row[
+        nagemisTabel += "<tr><td><a href='/search?loomaNimi="+row[0]+"'>"+ row[0] + "</a></td><td>" + row[1] + "</td><td>" + row[
             2].strftime(
             "%Y-%m-%d %H:%M:%S") + "</td></tr>"
     nagemisTabel += "</tbody></table>"
