@@ -17,7 +17,7 @@ mysql.init_app(app)
 conn = mysql.connect()
 cur = conn.cursor()
 
-@app.route('/delete', methods = ['POST', 'GET'])
+@app.route('/delete', methods = ['GET'])
 def delete():
     loomaNimi = request.args.get('loomaNimi')
     cur.execute("DELETE FROM loomad WHERE Nimi=%s", loomaNimi)
@@ -25,10 +25,32 @@ def delete():
     cur.execute("DELETE FROM nägemine WHERE Nimi=%s", loomaNimi)
     conn.commit()
     return redirect(url_for('index'))
-    #loomaTabel = getSpeiceByName("Ott")
-    #nagemisTabel = getSeeingsOfOneAnimal("Ott")
-    #tabNr = "1"
-    #return render_template("index.html", loomaNimi=loomaNimi, loomaTabel1=loomaTabel, nagemisTabel1=nagemisTabel, tabNr=tabNr)
+
+@app.route('/update', methods = ['POST','GET'])
+def update():
+    loomaNimi = request.args.get('loomaNimi')
+    liigiNimi = request.args.get('liigiNimi')
+    cur.execute("UPDATE loomad SET Liik=%s WHERE Nimi=%s", (liigiNimi, loomaNimi))
+    conn.commit()
+    return redirect(url_for('index'))
+
+@app.route('/updateLocation', methods = ['POST','GET'])
+def updateLocation():
+    loomaNimi = request.args.get('loomaNimi')
+    asukoht = request.args.get('asukoht')
+    aeg = request.args.get('aeg')
+    cur.execute("UPDATE nägemine SET Asukoht=%s WHERE Nimi=%s AND Aeg=%s", (asukoht, loomaNimi, aeg))
+    conn.commit()
+    return redirect(url_for('index'))
+
+@app.route('/updateTime', methods = ['POST','GET'])
+def updateTime():
+    loomaNimi = request.args.get('loomaNimi')
+    asukoht = request.args.get('asukoht')
+    aeg = request.args.get('aeg')
+    cur.execute("UPDATE nägemine SET Aeg=%s WHERE Nimi=%s AND Asukoht=%s", (aeg, loomaNimi, asukoht))
+    conn.commit()
+    return redirect(url_for('index'))
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -78,10 +100,13 @@ def index():
 def getSeeingsOfOneAnimal(loomaNimi):
     cur.execute('SELECT * FROM nägemine WHERE Nimi = %s', loomaNimi)
     nagemisTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Koht</th><th>Aeg</th></tr></thead><tbody>"
+    count = 0
     for row in cur.fetchall():
-        nagemisTabel += "<tr><td>" + row[0] + '</td><td id="location" contenteditable="true">' + row[1] \
-                        + "</td><td contenteditable id='time'>" + row[2].strftime("%Y-%m-%d %H:%M:%S") + "</td></tr>"
-        nagemisTabel += "</tbody></table>"
+        count += 1
+        string = str(count)
+        nagemisTabel += "<tr><td id='animalName"+string+"'>" + row[0] + "</td><td id='location"+string+"' contenteditable>" + row[1] \
+                        + "</td><td contenteditable id='time"+string+"'>" + row[2].strftime("%Y-%m-%d %H:%M:%S") + "</td></tr>"
+    nagemisTabel += "</tbody></table>"
     return nagemisTabel
 
 
@@ -94,7 +119,7 @@ def getSpeiceByName(loomaNimi):
     cur.execute('SELECT * FROM loomad WHERE Nimi = %s', loomaNimi)
     loomaTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Liik</th><th></th></tr></thead><tbody>"
     for row in cur.fetchall():
-        loomaTabel += "<tr><td>" + row[0] + "</td><td contenteditable id='speice'>" + row[1] + "</td><td><a href='/delete?loomaNimi="+loomaNimi+"'>Kustuta</a></td></tr>"
+        loomaTabel += "<tr><td id='name'>" + row[0] + "</td><td contenteditable id='speice'>" + row[1] + "</td><td><a href='/delete?loomaNimi="+loomaNimi+"'>Kustuta</a></td></tr>"
     loomaTabel += "</tbody></table>"
     return loomaTabel
 
