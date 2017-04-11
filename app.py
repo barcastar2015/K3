@@ -148,7 +148,7 @@ def getDataFromAnimalsTable(liigiNimi):
     cur.execute('SELECT * FROM loomad WHERE Liik = %s', liigiNimi)
     loomaTabel = "<table class='table'><thead><tr><th>Nimi</th><th>Liik</th></tr></thead><tbody>"
     for row in cur.fetchall():
-        loomaTabel += "<tr><td>" + row[0] + "</td><td>" + row[1] + "</td></tr>"
+        loomaTabel += "<tr><td><a href='/search?loomaNimi="+row[0]+"'>"+ row[0] + "</a></td><td>" + row[1] + "</td></tr>"
     loomaTabel += "</tbody></table>"
     return loomaTabel
 
